@@ -1,6 +1,6 @@
 id INTEGER UNIQUE NOT NULL                          - ShipStaticData/PositionReport "UserID" (MMSI number for vessel)
 name VARCHAR(100) NOT NULL                          - ShipStaticData "Name" (Name of vessel)
-imo INTEGER UNIQUE NOT NULL                         - ShipStaticData "ImoNumber" (IMO registration number for vessel)
+imo INTEGER NOT NULL                                - ShipStaticData "ImoNumber" (IMO registration number for vessel)
 type INTEGER NOT NULL                               - ShipStaticData "Type" (Vessel Type according to: https://api.vtexplorer.com/docs/ref-aistypes.html)
 length DOUBLE PRECISION NOT NULL                    - ShipStaticData "Dimension" "A + B" (Vessel length in metres)
 lat DOUBLE PRECISION NOT NULL                       - PositionReport "Latitude" (Latitude of vessel)
@@ -9,3 +9,17 @@ status INTEGER NOT NULL                             - PositionReport "Navigation
 cog DOUBLE PRECISION NOT NULL                       - PositionReport "Cog" (Course over ground in degrees)
 sog DOUBLE PRECISION NOT NULL                       - PositionReport "Sog" (Speed over ground in knots)
 timestamp TIMESTAMP NOT NULL                        - Generated in script (Timestamp of position update)
+
+
+/get_vessel_data request returns (for each vessel):
+{"id":id, 
+"name":name, 
+"imo":imo, 
+"type":shiptype, 
+"length":length, 
+"lat":lat, 
+"long":long, 
+"status":status, 
+"cog":cog, 
+"sog":sog, 
+"timestamp":timestamp}

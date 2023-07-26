@@ -43,70 +43,89 @@ async def connect_ais_stream():                                                 
             else:                                                                                # Handle other message type.
                 print(f"Unrecognised message type: {message_type}")
                 
-def handle_position_report(message):                                                            # Function to handle PositionReport
-    vessel_id = message["UserID"]  
-
-    print(f"Position Report recieved, MMSI: {vessel_id}")                                                              
-
-    if vessel_id in pending_vessels:                                                             # Check if there is an entry with the vessel_id in the pending_vessels dictionary
-        print(f"MMSI: {vessel_id} found in pending vessels")
-        if pending_vessels[vessel_id]["Type"] == "ShipStaticData":                               # If there is an entry with the message type "ShipStaticData" then a new entry can be added to the table
-            print("Pending ShipStaticData found")
-            add_new_entry(message, pending_vessels[vessel_id]["Message"])                        # Handle the addition of this new entry
-    else:
-        exists_query = f"SELECT id FROM vessels WHERE id = %s;"                                  # Check if there is an entry with the same vessel_id in the table already
-
-        with connection.cursor() as exists_cursor:
-            exists_cursor.execute(exists_query,(vessel_id,))
-            exists = exists_cursor.fetchone() is not None;
-        
-        print(f"MMSI: {vessel_id} exists in database: {exists}")
-
-        if exists:                                                                              # If there is then update the table with the new data from the message
-            update_query = f"UPDATE vessels SET lat = %s, long = %s, status = %s, cog = %s, sog = %s, timestamp = %s"
-            with connection.cursor() as update_cursor :
-                update_cursor.execute(update_query, (message["Latitude"], message["Longitude"], message["NavigationalStatus"], message["Cog"], message["Sog"], datetime.now().astimezone(pytz.utc).strftime("%Y-%m-%d %H:%M:%S")))
-
-            connection.commit()
-
-            print(f"Successfully updated MMSI: {vessel_id}")
-            
-        else:                                                                                   # If there isn't then add the message to the pending_vessels dictionary
-            pending_vessels[vessel_id] = {"Message" : message, "Type" : "PositionReport"}
-            print(f""" Added new entry to pending vessels, MMSI: {message["UserID"]} """)
-        
-def handle_ship_static_data(message):                                                           # Function to handle ShipStaticData
+def handle_position_report(message):
     vessel_id = message["UserID"]
 
-    print(f"Ship Static Date recieved, MMSI: {vessel_id}")
+    #__f"Position Report received, MMSI: {vessel_id}")
 
-    if vessel_id in pending_vessels:                                                            # Check if there is an entry with the vessel_id in the pending_vessels dictionary
-        print(f"MMSI: {vessel_id} found in pending vessels")
-        if pending_vessels[vessel_id]["Type"] == "PositionReport":                              # If there is an entry with the message type "PositionReport" then a new entry can be added to the table
-            print("Pending PositionReport found")
-            add_new_entry(pending_vessels[vessel_id]["Message"], message)                       # Handle the addition of this new entry
+    exists_query = "SELECT id FROM vessels WHERE id = %s;"
+
+    with connection.cursor() as exists_cursor:
+        exists_cursor.execute(exists_query, (vessel_id,))
+        exists = exists_cursor.fetchone() is not None
+
+    #__f"MMSI: {vessel_id} exists in database: {exists}")
+
+    if exists:
+        update_query = "UPDATE vessels SET lat = %s, long = %s, status = %s, cog = %s, sog = %s, timestamp = %s WHERE id = %s;"
+        with connection.cursor() as update_cursor:
+            update_cursor.execute(
+                update_query,
+                (
+                    message["Latitude"],
+                    message["Longitude"],
+                    message["NavigationalStatus"],
+                    message["Cog"],
+                    message["Sog"],
+                    datetime.now().astimezone(pytz.utc).strftime("%Y-%m-%d %H:%M:%S"),
+                    vessel_id,
+                ),
+            )
+
+        connection.commit()
+
+        #__f"Successfully updated MMSI: {vessel_id}")
 
     else:
-        exists_query = f"SELECT id FROM vessels WHERE id = %s;"                                  # Check if there is an entry with the same vessel_id in the table already
+        if vessel_id in pending_vessels:
+            #__f"MMSI: {vessel_id} found in pending vessels")
+            if pending_vessels[vessel_id]["Type"] == "ShipStaticData":
+                #__"Pending ShipStaticData found")
+                add_new_entry(message, pending_vessels[vessel_id]["Message"])
+        else:
+            pending_vessels[vessel_id] = {"Message": message, "Type": "PositionReport"}
+            #__f"Added new entry to pending vessels, MMSI: {vessel_id}")
 
-        with connection.cursor() as exists_cursor:
-            exists_cursor.execute(exists_query,(vessel_id,))
-            exists = exists_cursor.fetchone() is not None;
-        
-        print(f"MMSI: {vessel_id} exists in database: {exists}")
+def handle_ship_static_data(message):
+    vessel_id = message["UserID"]
 
-        if exists:                                                                              # If there is then update the table with the new data from the message
-            update_query = f"UPDATE vessels SET name = %s, imo = %s, type = %s, length = %s"
-            with connection.cursor() as update_cursor :
-                update_cursor.execute(update_query, (message["Name"], message["ImoNumber"], message["Type"], (message["Dimension"]["A"] + message["Dimension"]["B"]),))
+    #__f"Ship Static Data received, MMSI: {vessel_id}")
 
-            connection.commit()
+    exists_query = "SELECT id FROM vessels WHERE id = %s;"
 
-            print(f"Successfully updated MMSI: {vessel_id}")
-            
-        else:                                                                                   # If there isn't then add the message to the pending_vessels dictionary
-            pending_vessels[vessel_id] = {"Message" : message, "Type" : "ShipStaticData"}
-            print(f""" Added new entry to pending vessels, MMSI: {message["UserID"]} """)
+    with connection.cursor() as exists_cursor:
+        exists_cursor.execute(exists_query, (vessel_id,))
+        exists = exists_cursor.fetchone() is not None
+
+    #__f"MMSI: {vessel_id} exists in database: {exists}")
+
+    if exists:
+        update_query = "UPDATE vessels SET name = %s, imo = %s, type = %s, length = %s WHERE id = %s;"
+        with connection.cursor() as update_cursor:
+            update_cursor.execute(
+                update_query,
+                (
+                    message["Name"],
+                    message["ImoNumber"],
+                    message["Type"],
+                    (message["Dimension"]["A"] + message["Dimension"]["B"]),
+                    vessel_id,
+                ),
+            )
+
+        connection.commit()
+
+        #__f"Successfully updated MMSI: {vessel_id}")
+
+    else:
+        if vessel_id in pending_vessels:
+            #__f"MMSI: {vessel_id} found in pending vessels")
+            if pending_vessels[vessel_id]["Type"] == "PositionReport":
+                #__"Pending PositionReport found")
+                add_new_entry(pending_vessels[vessel_id]["Message"], message)
+        else:
+            pending_vessels[vessel_id] = {"Message": message, "Type": "ShipStaticData"}
+            #__f"Added new entry to pending vessels, MMSI: {vessel_id}")
 
 def add_new_entry(position_report, ship_static_data):                                           # Function to handle the addition of a new entry to the table
 
@@ -117,7 +136,7 @@ def add_new_entry(position_report, ship_static_data):                           
 
     connection.commit()
 
-    print(f""" Added new entry MMSI: {ship_static_data['UserID']} """)
+    #__f""" Added new entry MMSI: {ship_static_data['UserID']} """)
 
 if __name__ == "__main__":
     asyncio.run(asyncio.run(connect_ais_stream()))

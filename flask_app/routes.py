@@ -1,35 +1,31 @@
+from flask import Flask, render_template, jsonify
 from flask import current_app as app
-from flask import render_template
+import psycopg2
+import json
+
+connection = psycopg2.connect(database = "vessel_tracking",
+                        host="localhost",
+                        port="5432",
+                        user="postgres",
+                        password="postgres")
 
 @app.route('/')
 #
 # North Black Sea Map
 #
 def black():
-    return render_template("black.HTML",)
+    return render_template("black.HTML")
 
-@app.route('/world')
+@app.route('/get_vessel_data')
 #
-# Ships coming to / from Ukrainian Ports on the world map
+# Get Ship Data from Database
 #
-def world():
-    return render_template("world.HTML",)
-
-@app.route('/vessel/<vesselid>')
-#
-# Specific Vessel Map
-#
-def vessel(vesselid):
-    return render_template("vessel.HTML",)
-
-@app.route('/historic/<start>/<end>')
-@app.route('/historic/<start>/<end>/<area>')
-#
-# Historic North Black Sea Map
-#
-def historic(start,end,area='black'):
-    return render_template("historic.HTML",)
-
+def get_data():
+    with connection.cursor() as get_data_cursor:
+        get_data_cursor.execute("SELECT id, name, imo, type, length, lat, long, status, cog, sog, timestamp  FROM vessels;")
+        data = get_data_cursor.fetchall()
+    vessel_data = [{"id":id, "name":name, "imo":imo, "type":shiptype, "length":length, "lat":lat, "long":long, "status":status, "cog":cog, "sog":sog, "timestamp":timestamp} for id,name,imo,shiptype,length,lat,long,status,cog,sog,timestamp in data]
+    return jsonify(vessel_data)
 #
 # Error Codes
 #

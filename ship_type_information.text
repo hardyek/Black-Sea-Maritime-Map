@@ -1,0 +1,61 @@
+--- Colors 
+
+Special : Anything other than listed below : #000000
+
+Military / SAR / Law Enforce : 29 + 35 + 55 + 51 + 58 : #ff0000
+
+Tug / Port Operated Vessel : 31 - 32 + 50 + 52 - 53 : #939393
+
+Fishing : 30 : #00fcff
+
+Passenger : 60 - 69 : #f20bdb
+
+Cargo : 70 - 79 : #08ff00
+
+Tanker : 80 - 89 : #fff600
+
+--- Descriptions 
+
+0 - 9 : Unavailable
+10 - 19: Reserved
+20 - 28: Wing in Ground Effect Vessel
+29: SAR Aircraft
+30: Fishing Vessel
+31 - 32: Tug 
+33: Dredger
+34: Dive Vessel
+35: Military Ops
+36: Sailing Vessel
+37: Pleasure Vessel
+38 - 39: Reserved 
+40 - 49: High Speed Vessel
+50: Pilot Vessel
+51: SAR Vessel
+52: Tug (Special)
+53: Port Tender
+54: Anti-Pollution Vessel
+55: Law Enforcement Vessel
+56 - 57: Local Vessel
+58: Medical Transport Vessel
+59: Special Vessel
+60 - 69: Passenger
+70: Cargo
+71: Cargo - Hazard A (Major)
+72: Cargo - Hazard B 
+73: Cargo - Hazard C (Minor)
+74: Cargo - Hazard D (Recognisable)
+75 - 79: Cargo
+80: Tanker
+81: Tanker - Hazard A (Major)
+82: Tanker - Hazard B 
+83: Tanker - Hazard C (Minor)
+84: Tanker - Hazard D (Recognisable)
+85 - 89: Tanker
+90 - 99: Other
+
+
+
+
+
+
+
