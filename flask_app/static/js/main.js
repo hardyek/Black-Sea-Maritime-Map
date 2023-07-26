@@ -46,13 +46,13 @@ document.addEventListener('DOMContentLoaded', function () {
     updateMap();
 
     function createShipIcon(id,name,imo,type,lat,lng,status,cog,sog,timestamp) {
-        var iconHtml = '';
+        const color = returnColor(type);
+        const iconFileName = returnIconImg(status);
 
-        iconHtml = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" ' +
-                    'style="transform: rotate(' + cog + 'deg);">' +
-                    '<path fill="blue" d="M12 2L2 22h20L12 2zm0 16h-2v-2h2v2zm0-4h-2v-2h2v2zm0-4h-2V8h2v2z"/>' +
-                    '</svg>';
-
+        // Create the icon HTML
+        const iconHtml = '<img src="' + Imgs[iconFileName] + '" width="24" height="24" ' +
+            'style="transform: rotate(' + cog + 'deg); filter: brightness(120%) ' +
+            'drop-shadow(0px 0px 2px ' + color + ');"/>';
 
         return L.divIcon({
             className: 'custom-ship-icon',
@@ -60,4 +60,48 @@ document.addEventListener('DOMContentLoaded', function () {
             iconSize: [24, 24],
         });
     }
+
+    function returnColor(type) {
+        const Colors = {
+            special: "#000000",
+            military: "#ff0000",
+            tug: "#939393",
+            fishing: "#00fcff",
+            passenger: "#f20bdb",
+            cargo: "#08ff00",
+            tanker: "#fff600",
+        };
+
+        const Ranges = {
+            military: [29, 35, 55, 51, 58],
+            tug: [31, 32, 50, 52, 53],
+            fishing: [30],
+            passenger: [60, 69],
+            cargo: [70, 79],
+            tanker: [80, 89],
+        };
+        
+        for (const category in Ranges) {
+            if (Ranges[category].includes(number)) {
+              return Colors[category];
+            }
+        }
+
+        return Colors["special"]
+    };
+
+    function returnIconImg(status){
+        const Imgs = {
+            0: 'doubleup.svg',
+            1: 'anchor.svg',
+            5: 'anchor.svg',
+            7: 'fishing.svg',
+            8: 'sail.svg',
+            6: 'danger.svg'
+        }
+
+        const icon = Imgs[status] || 'singleup.svg';
+
+        return icon;
+    };
 });
