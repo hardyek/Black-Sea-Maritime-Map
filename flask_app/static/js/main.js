@@ -92,12 +92,12 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function returnIconImg(status){
         const Imgs = {
-            0: 'doubleup.svg',
-            1: 'anchor.svg',
-            5: 'anchor.svg',
-            7: 'fishing.svg',
-            8: 'sail.svg',
-            6: 'danger.svg'
+            0: "{{ url_for('static', filename='doubleup.svg') }}",
+            1: "{{ url_for('static', filename='anchor.svg') }}",
+            5: "{{ url_for('static', filename='anchor.svg') }}",
+            7: "{{ url_for('static', filename='fishing.svg') }}",
+            8: "{{ url_for('static', filename='sail.svg') }}",
+            6: "{{ url_for('static', filename='danger.svg') }}"
         }
 
         const icon = Imgs[status] || 'singleup.svg';
