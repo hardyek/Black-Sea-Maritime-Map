@@ -50,7 +50,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const iconFileName = returnIconImg(status);
 
         // Create the icon HTML
-        const iconHtml = '<img src="' + Imgs[iconFileName] + '" width="24" height="24" ' +
+        const iconHtml = '<img src="' + iconFileName + '" width="24" height="24" ' +
             'style="transform: rotate(' + cog + 'deg); filter: brightness(120%) ' +
             'drop-shadow(0px 0px 2px ' + color + ');"/>';
 
@@ -82,7 +82,7 @@ document.addEventListener('DOMContentLoaded', function () {
         };
         
         for (const category in Ranges) {
-            if (Ranges[category].includes(number)) {
+            if (Ranges[category].includes(type)) {
               return Colors[category];
             }
         }
