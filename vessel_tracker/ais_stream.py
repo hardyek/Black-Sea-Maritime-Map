@@ -23,25 +23,44 @@ subscription_message = {"APIKey": "bfd68e21d74dbfc0ce161987264dedb3ea8b34da",
             "FilterMessageTypes": ["PositionReport", "ShipStaticData"]}
 
 async def connect_ais_stream():                                                                 # Subscribe and recieve messages from the websocket
-    async with websockets.connect("wss://stream.aisstream.io/v0/stream") as websocket:
-        subscription_message_json = json.dumps(subscription_message)
+    while True:
+        try:
+            async with websockets.connect("wss://stream.aisstream.io/v0/stream") as websocket:
+                subscription_message_json = json.dumps(subscription_message)
+            
+                await websocket.send(subscription_message_json)
 
-        await websocket.send(subscription_message_json)
+                count = 0
+                print("Websocket connection established")
+                async for message_json in websocket:
+                    count += 1
+                    message = json.loads(message_json)
+                    message_type = message["MessageType"]
 
-        async for message_json in websocket:
-            message = json.loads(message_json)
-            message_type = message["MessageType"]
+                    if message_type == "PositionReport":                                                 # Handle the PositionReport message type
+                        ais_message = message["Message"]["PositionReport"]
+                        handle_position_report(ais_message)
 
-            if message_type == "PositionReport":                                                 # Handle the PositionReport message type
-                ais_message = message["Message"]["PositionReport"]
-                handle_position_report(ais_message)
+                    elif message_type == "ShipStaticData":                                               # Handle the ShipStaticData messsage type
+                        ais_message = message["Message"]["ShipStaticData"]
+                        handle_ship_static_data(ais_message)
 
-            elif message_type == "ShipStaticData":                                               # Handle the ShipStaticData messsage type
-                ais_message = message["Message"]["ShipStaticData"]
-                handle_ship_static_data(ais_message)
+                    else:                                                                                # Handle other message type.
+                        print(f"Unrecognised message type: {message_type}")
+                    
+                    if count == 100:
+                        count = 0
+                        print(f""" 100 Messages Handled - {datetime.now().strftime("%Y-%m-%d %H:%M:%S")} """)
 
-            else:                                                                                # Handle other message type.
-                print(f"Unrecognised message type: {message_type}")
+        except(websockets.exceptions.ConnectionClosedError):
+            print("Connection to websocket server closed unexpectedly. Retrying in 5 seconds...")
+            await asyncio.sleep(5)
+            continue
+
+        except Exception as e:
+            print(f"An error occurred: {e}. Retrying in 5 seconds...")
+            await asyncio.sleep(5)
+            continue
                 
 def handle_position_report(message):
     vessel_id = message["UserID"]

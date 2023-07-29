@@ -10,11 +10,12 @@ connection = psycopg2.connect(database = "vessel_tracking",
                         password="postgres")
 
 @app.route('/')
-#
-# North Black Sea Map
-#
-def black():
-    return render_template("black.HTML")
+def map():
+    return render_template("map.HTML")
+
+@app.route('/info')
+def info():
+    return render_template("info.HTML")
 
 @app.route('/get_vessel_data')
 #
@@ -24,7 +25,7 @@ def get_data():
     with connection.cursor() as get_data_cursor:
         get_data_cursor.execute("SELECT id, name, imo, type, length, lat, long, status, cog, sog, timestamp  FROM vessels;")
         data = get_data_cursor.fetchall()
-    vessel_data = [{"id":id, "name":name, "imo":imo, "type":shiptype, "length":length, "lat":lat, "long":long, "status":status, "cog":cog, "sog":sog, "timestamp":timestamp} for id,name,imo,shiptype,length,lat,long,status,cog,sog,timestamp in data]
+    vessel_data = [{"id":id, "name":name, "imo":imo, "type":shiptype, "vessellength":length, "lat":lat, "long":long, "status":status, "cog":cog, "sog":sog, "timestamp":timestamp} for id,name,imo,shiptype,length,lat,long,status,cog,sog,timestamp in data]
     return jsonify(vessel_data)
 #
 # Error Codes

@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Shipping - Black Sea</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/black.css') }}" />
+    <script>
+        var svgUrls = {
+            doubleup: "{{ url_for('static', filename='doubleup.svg') }}",
+            anchor: "{{ url_for('static', filename='anchor.svg') }}",
+            fishing: "{{ url_for('static', filename='fishing.svg') }}",
+            sail: "{{ url_for('static', filename='sail.svg') }}",
+            danger: "{{ url_for('static', filename='danger.svg') }}",
+            singleup: "{{url_for('static', filename='singleup.svg')}}"
+        };
+    </script>
+</head>
+<body>
+    <div id="map"></div>
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script src="{{ url_for('static', filename='js/main_map.js') }}"></script>
+</body>
+</html>
