@@ -1,7 +1,6 @@
-from flask import Flask, render_template, jsonify
+from flask import render_template, jsonify
 from flask import current_app as app
 import psycopg2
-import json
 
 connection = psycopg2.connect(database = "vessel_tracking",
                         host="localhost",

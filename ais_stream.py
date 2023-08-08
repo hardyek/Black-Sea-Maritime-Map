@@ -18,7 +18,7 @@ except:
                                                                                                 # Initialising the subscription message and the pending vessels dictionary
 pending_vessels = {}
 
-subscription_message = {"APIKey": "bfd68e21d74dbfc0ce161987264dedb3ea8b34da",
+subscription_message = {"APIKey": "0c041a2989078bc8d9c0295059a9eeaf0c7f5186",
             "BoundingBoxes": [[[50.008747, 21.141895],[35.997054, 59.637987]]],
             "FilterMessageTypes": ["PositionReport", "ShipStaticData"]}
 
