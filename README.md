@@ -46,3 +46,5 @@ Fishing Hook - Engaged in Fishing
 Sail - Under way sailing
 Danger - Aground
 Single Arrow - All Else
+
+<i>Commits to this repo from my laptop are for some reason listed as being by the user "SomeName0"</i>
